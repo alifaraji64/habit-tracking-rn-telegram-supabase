@@ -6,11 +6,11 @@ import { StatusBar } from 'expo-status-bar';
 import { Text, TouchableOpacity } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider, useAuth } from '../context/AuthContext';
 import "../global.css";
-import { supabase } from '../supabase';
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const router = useRouter()
+  const colorScheme = useColorScheme() || 'light';
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -21,16 +21,27 @@ export default function RootLayout() {
   }
 
   return (
+    <AuthProvider>
+      <AppLayoutInner colorScheme={colorScheme} />
+    </AuthProvider>
+  );
+}
+
+function AppLayoutInner({ colorScheme }: { colorScheme: string }) {
+  const { signOut } = useAuth();
+  const router = useRouter()
+  return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SafeAreaProvider className='flex-1 dark:bg-gray-800'>
         <Stack>
-          <Stack.Screen name="(auth)" options={{ headerShown: false,animation:'none' }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false, animation: 'none' }} />
           <Stack.Screen name="(dashboard)/profile" options={{
+            animation: 'none',
             headerShown: true, title: 'ali@gmail.com', headerRight: () => {
               return <TouchableOpacity
                 className=' px-2'
-                onPress={async () => { 
-                  await supabase.auth.signOut() 
+                onPress={async () => {
+                  await signOut();
                   router.replace('/(auth)/login')
                 }}
               >
@@ -46,3 +57,6 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
+
+

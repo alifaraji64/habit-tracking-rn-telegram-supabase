@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Alert, Button, Text, TextInput, View, useColorScheme } from 'react-native';
 import { Colors } from '../../constants/Colors';
-import { supabase } from '../../supabase';
+import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
     const colorScheme = useColorScheme();
@@ -13,6 +13,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('')
+    const {signUp} = useAuth()
 
     const handleRegister = async () => {
         if (!email || !password || !confirmPassword) {
@@ -25,18 +26,11 @@ const Register = () => {
         }
         // Proceed with registration logic (API call etc.)
         try {
-            
-            const { user, error } = await supabase.auth.signUp({
-                email,
-                password,
-            });
-            if(error){
-                setError(error.message)
-                return;
-            }
+           const user = await signUp(email,password)
             router.replace('/profile')
         } catch (error) {
             setError(error.message)
+            Alert.alert('Error', error.message);
         }
 
     };
@@ -76,9 +70,6 @@ const Register = () => {
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
             />
-            {error && <View className='bg-red-300 p-3 my-3'>
-                <Text className='text-red-800 text-center text-lg'>{error}</Text>
-            </View>}
             <View className="mt-4">
                 <Button title="Register" onPress={handleRegister} />
             </View>

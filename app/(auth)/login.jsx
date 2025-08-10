@@ -1,38 +1,38 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View, useColorScheme } from 'react-native';
 import { Colors } from '../../constants/Colors';
-import { supabase } from '../../supabase';
-const login = () => {
+import { useAuth } from '../../context/AuthContext';
+const Login = () => {
     const colorScheme = useColorScheme();
     const theme = Colors[colorScheme] ?? Colors.light
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter()
+    const { user, loading, signIn } = useAuth()
     const handleLogin = async () => {
         if (!email || !password) {
             Alert.alert('Error', 'Please enter both email and password.',);
             return;
         }
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-        if (error) {
-            Alert.alert('Error', error.message);
-            return
-        }
-        Alert.alert('Success', `Welcome back, ${data.user.email}`);
-        // Navigate to your authenticated app screen here
-        router.replace('/profile')
+            const user = await signIn(email, password);
+            Alert.alert('Success', `Welcome back, ${user.email}`);
+            // Navigate to your authenticated app screen here
+            router.replace('/profile');
         } catch (error) {
-            console.log('====================================');
             console.log(error);
-            console.log('====================================');
+            Alert.alert('Error', error.message,);
         }
-        
+
     };
+    // Redirect to profile if already logged in
+    useEffect(() => {
+        if (!loading && user) {
+            router.replace('/profile');
+        }
+    }, [user, loading]);
+    
 
     return (
         <View className="p-6 mt-20">
@@ -65,6 +65,6 @@ const login = () => {
     )
 }
 
-export default login
+export default Login
 
 const styles = StyleSheet.create({})
