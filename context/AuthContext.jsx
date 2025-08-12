@@ -11,7 +11,6 @@ export const AuthProvider = ({ children }) => {
                 if (session?.user) {
                     setUser(session.user);
                     console.log('hh');
-
                 }
                 if (error) {
                     console.log(error);

@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TextInput, View, useColorScheme } from 'react-native';
 import { Colors } from '../../constants/Colors';
 import { useAuth } from '../../context/AuthContext';
@@ -26,14 +26,6 @@ const Login = () => {
         }
 
     };
-    // Redirect to profile if already logged in
-    useEffect(() => {
-        if (!loading && user) {
-            router.replace('/profile');
-        }
-    }, [user, loading]);
-    
-
     return (
         <View className="p-6 mt-20">
             <Text className="mb-2 font-bold text-lg" style={{ color: theme.text }}>Email</Text>
@@ -63,6 +55,7 @@ const Login = () => {
             </View>
         </View>
     )
+
 }
 
 export default Login
