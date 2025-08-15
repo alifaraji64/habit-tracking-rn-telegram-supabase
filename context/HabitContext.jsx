@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { supabase } from '../supabase';
 const HabitContext = createContext()
 export const HabitProvider = ({ children }) => {
