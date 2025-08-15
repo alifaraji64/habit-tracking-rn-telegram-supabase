@@ -21,7 +21,7 @@ export const HabitProvider = ({ children }) => {
 
         fetchHabits();
     }, []);
-    const addHabit = async ({ habitName, pickerDate, habitTime }) => {
+    const addHabit = async ({ habitName, pickerDate, habitTime, userId }) => {
         if (!habitName || !habitTime) {
             throw new Error('Please provide habit name, time.');
         }
@@ -32,6 +32,7 @@ export const HabitProvider = ({ children }) => {
                     name: habitName,
                     selected_time: format(pickerDate, 'yyyy-MM-dd hh:mm a'),
                     checked: false,
+                    user_id: userId
                 }
             ])
             .select();
@@ -68,7 +69,7 @@ export const HabitProvider = ({ children }) => {
     const deleteHabit = async (id) => {
         const { error } = await supabase.from('habits').delete().eq('id', id);
         console.log('Deleted habit with id:', id);
-        
+
         if (error) {
             throw new Error(error.message);
         }

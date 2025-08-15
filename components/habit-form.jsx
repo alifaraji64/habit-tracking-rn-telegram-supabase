@@ -2,6 +2,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 import { useHabit } from '../context/HabitContext';
 const HabitForm = () => {
     const { setHabits, addHabit, habits } = useHabit()
@@ -9,9 +10,10 @@ const HabitForm = () => {
     const [pickerDate, setPickerDate] = useState(new Date());
     const [habitTime, setHabitTime] = useState('');
     const [showPicker, setShowPicker] = useState(false);
+    const {user} = useAuth();
     const handleAddHabit = async () => {
         try {
-            const data = await addHabit({ habitName, pickerDate, habitTime });
+            const data = await addHabit({ habitName, pickerDate, habitTime,userId:user.id });
             console.log('Inserted data:', data);
             setHabits([...habits, { name: data[0].name, selected_time: data[0].selected_time, checked: false, id: data[0].id }]);
             setHabitName('');
